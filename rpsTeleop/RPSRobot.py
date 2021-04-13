@@ -8,6 +8,7 @@ import sys
 
 class RPSRobot(MistyRobot):
     def __init__(self, ip, conditionInFavorOf, possibleMoves, debug=False):
+        self.roundStarted = False
         self.currentMoveNum = 0
         self.totalRounds = 20
 
@@ -19,6 +20,7 @@ class RPSRobot(MistyRobot):
         self.conditionInFavorOf = conditionInFavorOf
         print("Misty will cheat in favour of:", conditionInFavorOf)
 
+        self.currentMoveName = ""
         self.possibleMoves = possibleMoves
         self.moveList = np.random.choice(self.possibleMoves, self.totalRounds)
         # print(self.moveList)
@@ -62,17 +64,26 @@ class RPSRobot(MistyRobot):
     def playMove(self, move):
         move = move.lower()
 
+        vel = 100
         if (move == "rock"):
-            self.moveArms(80, 80, 100, 100)
+            self.moveArms(80, 80, vel, vel)
         elif (move == "paper"):
-            self.moveArms(-80, -80, 100, 100)
+            self.moveArms(-80, -80, vel, vel)
         elif (move == "scissors"):
-            self.moveArms(-80, 80, 100, 100)
+            self.moveArms(-80, 80, vel, vel)
 
     def playAudioName(self, audioName):
         self.playAudio(audioName + ".mp3")
 
     def startRound(self):
+        if self.roundStarted: 
+            return
+
+        self.roundStarted = True
+        if(self.currentMoveNum == 0):
+            self.playAudio("begin.mp3")
+            sleep(5)
+
         self.playAudio("start.mp3")
 
         sleep(3)
@@ -115,13 +126,21 @@ class RPSRobot(MistyRobot):
         self.humanTotalRounds += 1
         self.currentMoveNum += 1
         self.resetArm()
+        self.roundStarted = False
 
         if (self.currentMoveNum == self.totalRounds):
             print(f"Game complete with {self.totalRounds} rounds played!")
+
+            sleep(1)
+
         else:
             print("Misty ready for next round!")
 
     def winStatus(self, personMove):
+        if not self.roundStarted:
+            print("Start the round first!")
+            return
+
         mistyMove = self.currentMoveName
 
         if (mistyMove == personMove):
@@ -161,7 +180,7 @@ KEYMAP = {
     "LEFT": [ord('a'), KEYCODE['LEFT']],
     "RIGHT": [ord('d'), KEYCODE['RIGHT']],
 
-    "HELLO": [ord('h'), ord('i')],
+    # "HELLO": [ord('h'), ord('i')],
     "START_ROUND": [ord(' ')],
     "PERSON_RESPONSE": [ord('1'), ord('2'), ord('3')]
 }
@@ -189,15 +208,15 @@ def loop(keyboard):
             if key in KEYMAP["START_ROUND"]:
                 print(f"Starting round {misty.currentMoveNum}")
                 misty.startRound()
-                print(f"Remember human responses are 1, 2, 3 for {misty.possibleMoves}")
+                # print(f"Remember human responses are 1, 2, 3 for {misty.possibleMoves}")
 
             elif key in KEYMAP["PERSON_RESPONSE"]:
                 i = int(chr(key)) - 1
                 person_move = possibleMoves[i]
                 misty.checkRoundStatus(person_move)
 
-            elif key in KEYMAP["HELLO"]:
-                misty.waveRightArm()
+            # elif key in KEYMAP["HELLO"]:
+            #     misty.waveRightArm()
 
             sleep(0.01)
         except KeyboardInterrupt as e:
