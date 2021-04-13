@@ -15,7 +15,8 @@ class MistyRobot:
         arm = arm.lower()
         units = units.lower()
 
-        assert arm == "left" or arm == "right", "Invalid arm requested. Please use 'left' or 'right'"
+        assert arm == "left" or arm == "right" or arm == "both", "Invalid arm requested. Please use 'left' or 'right' or 'both'"
+
         assert units == "degrees" or units == "radians" or units == "position", "Invalid unit. Please use 'degrees', 'radians', or 'position'"
         assert 0 < velocity <= 100, "Velocity should be between 0 and 100"
 
@@ -26,7 +27,10 @@ class MistyRobot:
         else:
             assert 0 <= position <= 10, "Expected value 0 <= >= 10"
 
-        requests.post('http://'+self.ip+'/api/arms',
+        if (arm == 'both'):
+            self.moveArms(position, position, velocity, velocity)
+        else:
+            requests.post('http://'+self.ip+'/api/arms',
                       json={"Arm": arm, "Position": position, "Velocity": velocity, "Units": units})
 
     def moveArms(self, rightArmPosition, leftArmPosition, rightArmVelocity, leftArmVelocity, units="degrees"):
@@ -51,6 +55,9 @@ class MistyRobot:
             "rightArmVelocity": rightArmVelocity,
             "units": units
         })
+
+    def moveArmDegrees(self, arm, position, velocity):
+        self.moveArm(arm, position, velocity, "degrees")
 
     def moveArmsDegrees(self, rightArmPosition, leftArmPosition, rightArmVelocity, leftArmVelocity):
         self.moveArms(rightArmPosition, leftArmPosition,
@@ -82,17 +89,35 @@ class MistyRobot:
         else:
             print("Error: Failed to speak.")
 
-    def uploadAudio(self, file_name, apply=False, overwrite=False):
+    def uploadAudio(self, file_name, save_file_name=None, apply=False, overwrite=False):
         url = 'http://' + self.ip + '/api/audio'
         with open(file_name, 'rb') as f:
             encoded_string = base64.b64encode(f.read()).decode('ascii')
-            data = {"FileName": file_name, "Data": encoded_string,
+
+            if save_file_name is None:
+                save_file_name = file_name
+                
+            data = {"FileName": save_file_name, "Data": encoded_string,
                     "ImmediatelyApply": apply, "OverwriteExisting": overwrite}
             requests.post(url, json=data)
 
     def playAudio(self, file_name):
         if file_name in self.audio_saved:
-            requests.post('http://' + self.ip + '/api/audio/play',
+            response = requests.post('http://' + self.ip + '/api/audio/play',
                           json={"AssetId": file_name})
         else:
             print(file_name, "not found on the robot, use <robot_name>.printAudioList() to see the list of saved audio files")
+
+        return False
+
+    def populateAudio(self):
+        self.audio_saved = []
+        resp = requests.get('http://'+self.ip+'/api/audio/list')
+        for out in resp.json()["result"]:
+            self.audio_saved.append(out["name"])
+
+    def printAudioList(self):
+        print(self.audio_saved)
+
+    def getAudioList(self):
+        return self.audio_saved
