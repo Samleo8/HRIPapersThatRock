@@ -48,6 +48,9 @@ class RPSRobot(MistyRobot):
         sleep(5)
         self.resetArm()
 
+    def playAudioName(self, audioName):
+        self.playAudio(audioName + ".mp3")
+
     def startRound(self):
         self.playAudio("start.mp3")
 
@@ -64,6 +67,8 @@ class RPSRobot(MistyRobot):
 
 if __name__ == "__main__":
     misty = RPSRobot("192.168.1.169")
+
+    misty.playAudioName("hello")
 
     for i in range(misty.totalMoves):
         misty.startRound()
