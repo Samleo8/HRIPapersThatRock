@@ -10,7 +10,9 @@ class RPSRobot(MistyRobot):
     def __init__(self, ip, conditionInFavorOf, possibleMoves, debug=False):
         self.currentMoveNum = 0
         self.totalRounds = 20
-        self.winTimes = 0
+
+        self.humanTotalRounds = 0
+        self.humanWinTimes = 0
 
         # Setup conditions and moves
         assert conditionInFavorOf in conditions, f"Condition must be one of {conditions}"
@@ -106,9 +108,11 @@ class RPSRobot(MistyRobot):
                 self.currentMoveNum -= 1
         else:
             misty.playAudioName(winStatus)
+            self.humanWinTimes = self.humanWinTimes + int(winStatus == 'lose')
 
         sleep(5)
 
+        self.humanTotalRounds += 1
         self.currentMoveNum += 1
         self.resetArm()
 
@@ -191,6 +195,9 @@ def loop(keyboard):
                 i = int(chr(key)) - 1
                 person_move = possibleMoves[i]
                 misty.checkRoundStatus(person_move)
+
+            elif key in KEYMAP["HELLO"]:
+                misty.waveRightArm()
 
             sleep(0.01)
         except KeyboardInterrupt as e:
