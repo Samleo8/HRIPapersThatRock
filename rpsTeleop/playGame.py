@@ -24,9 +24,9 @@ KEYMAP = {
     "RIGHT": ['d', KEYCODE['RIGHT']],
 
     # "HELLO": ['h', 'i'],
-    "START_ROUND": [' '],
+    "START_ROUND": [' ', KEYCODE['ENTER']],
     "PERSON_RESPONSE": ['1', '2', '3', 'l', ';', '\''],
-    "TRIAL_ROUND": [KEYCODE['ENTER'], 't']
+    "TRIAL_ROUND": ['t']
 }
 
 
