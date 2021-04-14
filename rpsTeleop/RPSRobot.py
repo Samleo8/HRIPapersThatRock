@@ -14,8 +14,6 @@ class RPSRobot(MistyRobot):
         self.humanTotalRounds = 0
         self.humanWinTimes = 0
 
-        self.trialComplete = True
-
         # Setup conditions and moves
         self.conditionInFavorOf = conditionInFavorOf
         print("Misty will cheat in favour of:", conditionInFavorOf)
