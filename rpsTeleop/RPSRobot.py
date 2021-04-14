@@ -34,6 +34,9 @@ class RPSRobot(MistyRobot):
         if conditionInFavorOf != 'control':
             self.cheatTimes[cheatRounds] = 1
 
+        # self.trialComplete = True
+        # self.cheatTimes = np.ones(self.totalRounds)
+
         # Init parent robot actions
         super().__init__(ip, debug)
 
@@ -90,6 +93,9 @@ class RPSRobot(MistyRobot):
         if self.roundStarted: 
             return
 
+        if (self.currentMoveNum == self.totalRounds):
+            return
+
         print(f"Starting round {misty.currentMoveNum}")
 
         self.roundStarted = True
@@ -118,20 +124,26 @@ class RPSRobot(MistyRobot):
         toCheat = self.cheatTimes[self.currentMoveNum]
 
         if toCheat:
+            print(f"Misty is cheating in favour of {self.conditionInFavorOf}!")
             # Condition in favour of human; cheat to lose
             if self.conditionInFavorOf == "human" and winStatus != 'lose':
-                self.playMove(self.getLosingMove())
+                move = self.getLosingMove(personMove)
+                self.playMove(move)
                 sleep(2)
                 misty.playAudioName('lose')
             # Condition in favour of human; cheat to win
             elif self.conditionInFavorOf == "robot" and winStatus != 'win':
-                self.playMove(self.getWinningMove())
+                move = self.getWinningMove(personMove)
+                self.playMove(move)
                 sleep(2)
                 misty.playAudioName('win')
             # Cannot cheat because already satisfied
             # NOTE: Extended interaction, keep same round number
             else:
+                print("Misty failed to cheat. Game extended by another round.")
                 self.currentMoveNum -= 1
+                misty.playAudioName(winStatus)
+                self.humanWinTimes = self.humanWinTimes + int(winStatus == 'lose')
         else:
             misty.playAudioName(winStatus)
             self.humanWinTimes = self.humanWinTimes + int(winStatus == 'lose')
@@ -144,12 +156,13 @@ class RPSRobot(MistyRobot):
         self.roundStarted = False
 
         if (self.currentMoveNum == self.totalRounds):
-            print(f"Game complete with {self.totalRounds} rounds played!")
-            print(f"Human won {self.humanWinTimes} out of {self.humanTotalRounds} played!")
+            print(f"Game complete! Human won {self.humanWinTimes} out of {self.humanTotalRounds} played!")
 
             self.playAudio("finish.mp3")
 
             sleep(2.5)
+
+            return
         else:
             print("Misty ready for next round!")
 
@@ -159,20 +172,19 @@ class RPSRobot(MistyRobot):
 
         # NOTE: Person will always play scissors
         for move in self.possibleMoves:
-            self.currentMoveName = move
             self.playMoveWithAudio(self.currentMoveName)
 
-            sleep(2)
+            sleep(2) # how long before robot responds
 
-            self.playAudioName(self.winStatus("scissors"))
+            self.playAudioName(self.winStatus("scissors", move))
             self.resetArm()
 
-            sleep(1.5)
+            sleep(2) # how long before next round
 
         self.trialComplete = True
 
-    def winStatus(self, personMove):
-        mistyMove = self.currentMoveName
+    def winStatus(self, personMove, robotMove=None):
+        mistyMove = self.currentMoveName if robotMove is None else robotMove
 
         if (mistyMove == personMove):
             return 'tie'
