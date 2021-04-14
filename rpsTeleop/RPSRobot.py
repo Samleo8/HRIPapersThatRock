@@ -2,9 +2,9 @@ from MistyRobot import MistyRobot
 import numpy as np
 from time import sleep
 import os
-import curses
 import sys
 
+import getch
 
 class RPSRobot(MistyRobot):
     def __init__(self, ip, conditionInFavorOf, possibleMoves, debug=False):
@@ -211,25 +211,25 @@ key = ''
 
 # CONSTANT KEYCODES
 KEYCODE = {
-    "UP": curses.KEY_UP,
-    "LEFT": curses.KEY_LEFT,
-    "RIGHT": curses.KEY_RIGHT,
-    "DOWN": curses.KEY_DOWN,
-    "ESC": 27,
-    "ENTER": 13
+    "UP": chr(38),
+    "LEFT": chr(37),
+    "RIGHT": chr(39),
+    "DOWN": chr(40),
+    "ESC": chr(27),
+    "ENTER": chr(13)
 }
 
 # CHANGE YOUR KEYMAP HERE
 KEYMAP = {
-    "UP": [ord('w'), KEYCODE['UP']],
-    "DOWN": [ord('s'), KEYCODE['DOWN']],
-    "LEFT": [ord('a'), KEYCODE['LEFT']],
-    "RIGHT": [ord('d'), KEYCODE['RIGHT']],
+    "UP": ['w', KEYCODE['UP']],
+    "DOWN": ['s', KEYCODE['DOWN']],
+    "LEFT": ['a', KEYCODE['LEFT']],
+    "RIGHT": ['d', KEYCODE['RIGHT']],
 
-    # "HELLO": [ord('h'), ord('i')],
+    # "HELLO": ['h', 'i'],
     "START_ROUND": [ord(' ')],
-    "PERSON_RESPONSE": [ord('1'), ord('2'), ord('3')],
-    "TRIAL_ROUND": [KEYCODE['ENTER'], ord('t')]
+    "PERSON_RESPONSE": ['1', '2', '3'],
+    "TRIAL_ROUND": [KEYCODE['ENTER'], 't']
 }
 
 
@@ -244,7 +244,24 @@ def isInteger(n):
     else:
         return float(n).is_integer()
 
-def loop(keyboard):
+if __name__ == "__main__":
+    conditionInFavorOf = None if len(sys.argv) <= 1 else sys.argv[1]
+
+    conditions = ["control", "robot", "human"]
+    if isInteger(conditionInFavorOf):
+        conditionInFavorOf = conditions[int(conditionInFavorOf)]
+
+    possibleMoves = ["rock", "paper", "scissors"]
+
+    misty = RPSRobot(
+        ip="192.168.1.169",
+        conditionInFavorOf=conditionInFavorOf,
+        possibleMoves=possibleMoves,
+        debug=False
+    )
+
+    print("Remember to start the trial first with the <ENTER> key.")
+
     misty_head = {
         "roll": 0,
         "pitch": 0,
@@ -253,7 +270,7 @@ def loop(keyboard):
 
     while True:
         try:
-            key = keyboard.getch()
+            key = getch()
 
             if key == KEYCODE["ESC"]:
                 break
@@ -277,32 +294,4 @@ def loop(keyboard):
         except KeyboardInterrupt as e:
             break
 
-    curses.endwin()
-
-
-if __name__ == "__main__":
-    conditionInFavorOf = None if len(sys.argv) <= 1 else sys.argv[1]
-
-    conditions = ["control", "robot", "human"]
-    if isInteger(conditionInFavorOf):
-        conditionInFavorOf = conditions[int(conditionInFavorOf)]
-
-    possibleMoves = ["rock", "paper", "scissors"]
-
-    misty = RPSRobot(
-        ip="192.168.1.169",
-        conditionInFavorOf=conditionInFavorOf,
-        possibleMoves=possibleMoves,
-        debug=False
-    )
-
-    # Curses stuff
-    keyboard = curses.initscr()
-    # curses.noecho()
-    curses.halfdelay(1)
-    keyboard.keypad(True)
-
-    print("Remember to start the trial first with the <ENTER> key.")
-
-    curses.wrapper(loop)
     misty.stop()
