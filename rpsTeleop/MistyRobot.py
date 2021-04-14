@@ -31,7 +31,7 @@ class MistyRobot:
             self.moveArms(position, position, velocity, velocity)
         else:
             requests.post('http://'+self.ip+'/api/arms',
-                      json={"Arm": arm, "Position": position, "Velocity": velocity, "Units": units})
+                          json={"Arm": arm, "Position": position, "Velocity": velocity, "Units": units})
 
     def moveArms(self, rightArmPosition, leftArmPosition, rightArmVelocity, leftArmVelocity, units="degrees"):
         units = units.lower()
@@ -96,7 +96,7 @@ class MistyRobot:
 
             if save_file_name is None:
                 save_file_name = file_name
-                
+
             data = {"FileName": save_file_name, "Data": encoded_string,
                     "ImmediatelyApply": apply, "OverwriteExisting": overwrite}
             requests.post(url, json=data)
@@ -104,11 +104,36 @@ class MistyRobot:
     def playAudio(self, file_name):
         if file_name in self.audio_saved:
             response = requests.post('http://' + self.ip + '/api/audio/play',
-                          json={"AssetId": file_name})
+                                     json={"AssetId": file_name})
         else:
             print(file_name, "not found on the robot, use <robot_name>.printAudioList() to see the list of saved audio files")
 
         return False
+
+    def moveHead(self, roll, pitch, yaw, velocity=10, units="degrees"):
+        if(units == "position"):
+            assert -5.0 <= roll <= 5.0 and -5.0 <= pitch <= 5.0 and - \
+                5.0 <= yaw <= 5.0, " moveHead: Roll, Pitch and Yaw needs to be in range -5 to +5"
+        elif(units == "radians"):
+            assert -.75 <= roll <= .75 and -.1662 <= pitch <= .6094 and - \
+                1.57 <= yaw <= 1.57, " moveHead: invalid positioning"
+        else:
+            units = "degrees"
+            assert -9.5 <= pitch <= 34.9 and -43 <= roll <= 43 and - \
+                90 <= yaw <= 90, " moveHead: invalid positioning"
+
+        assert 0.0 <= velocity <= 100.0, " moveHead: Velocity needs to be in range 0 to 100"
+        requests.post('http://'+self.ip+'/api/head', json={
+                      "Pitch": pitch, "Roll": roll, "Yaw": yaw, "Velocity": velocity, "Units": units})
+
+    def moveHeadPosition(self, pitch, roll, yaw, velocity):
+        self.moveHead(pitch, roll, yaw, velocity, "position")
+
+    def moveHeadRadians(self, pitch, roll, yaw, velocity):
+        self.moveHead(pitch, roll, yaw, velocity, "radians")
+
+    def moveHeadDegrees(self, pitch, roll, yaw, velocity):
+        self.moveHead(pitch, roll, yaw, velocity, "degrees")
 
     def populateAudio(self):
         self.audio_saved = []

@@ -297,3 +297,4 @@ if __name__ == "__main__":
     print("Remember to start the trial first with the <ENTER> key.")
 
     curses.wrapper(loop)
+    misty.stop()
