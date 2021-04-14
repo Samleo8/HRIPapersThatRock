@@ -73,7 +73,6 @@ def playGame(conditionInFavorOf):
                 break
 
             if key in KEYMAP["START_ROUND"]:
-                print("space pressed")
                 misty.startRound()
                 # print(f"Remember human responses are 1, 2, 3 for {misty.possibleMoves}")
 
@@ -88,8 +87,10 @@ def playGame(conditionInFavorOf):
             # elif key in KEYMAP["HELLO"]:
             #     misty.waveRightArm()
 
-            sleep(0.01)
+            # sleep(0.01)
         except KeyboardInterrupt as e:
+            break
+        except OverflowError as e:
             break
 
     misty.stop()

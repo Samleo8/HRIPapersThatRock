@@ -14,6 +14,8 @@ class RPSRobot(MistyRobot):
         self.humanTotalRounds = 0
         self.humanWinTimes = 0
 
+        self.trialComplete = True
+
         # Setup conditions and moves
         self.conditionInFavorOf = conditionInFavorOf
         print("Misty will cheat in favour of:", conditionInFavorOf)
@@ -144,7 +146,7 @@ class RPSRobot(MistyRobot):
             self.playAudioName(winStatus)
             self.humanWinTimes = self.humanWinTimes + int(winStatus == 'lose')
 
-        sleep(5)
+        sleep(1)
 
         self.humanTotalRounds += 1
         self.currentMoveNum += 1
@@ -178,6 +180,7 @@ class RPSRobot(MistyRobot):
             sleep(2) # how long before next round
 
         self.trialComplete = True
+        print("Trial complete.")
 
     def winStatus(self, personMove, robotMove=None):
         mistyMove = self.currentMoveName if robotMove is None else robotMove
