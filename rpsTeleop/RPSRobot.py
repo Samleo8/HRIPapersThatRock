@@ -9,6 +9,8 @@ import sys
 class RPSRobot(MistyRobot):
     def __init__(self, ip, conditionInFavorOf, possibleMoves, debug=False):
         self.roundStarted = False
+        self.trialComplete = False
+
         self.currentMoveNum = 0
         self.totalRounds = 20
 
@@ -72,30 +74,43 @@ class RPSRobot(MistyRobot):
         elif (move == "scissors"):
             self.moveArms(-80, 80, vel, vel)
 
+    def playMoveWithAudio(self, move):
+        self.playAudio("start.mp3")
+        sleep(2.5)
+        self.playMove(move)
+
     def playAudioName(self, audioName):
         self.playAudio(audioName + ".mp3")
 
     def startRound(self):
+        if not self.trialComplete:
+            self.startTrialRounds()
+            return
+
         if self.roundStarted: 
             return
+
+        print(f"Starting round {misty.currentMoveNum}")
 
         self.roundStarted = True
         if(self.currentMoveNum == 0):
             self.playAudio("begin.mp3")
-            sleep(5)
-
-        self.playAudio("start.mp3")
-
-        sleep(3)
+            sleep(4)
 
         self.currentMoveName = self.moveList[self.currentMoveNum]
 
         if self.debug:
             print("Misty will play", misty.currentMoveName)
 
-        self.playMove(self.currentMoveName)
+        self.playMoveWithAudio(self.currentMoveName)
+
+        print("Awaiting input from human...")
 
     def checkRoundStatus(self, personMove):
+        if not self.roundStarted:
+            print("Start the round first!")
+            return
+
         print("Person played:", personMove)
 
         winStatus = self.winStatus(personMove)
@@ -130,17 +145,33 @@ class RPSRobot(MistyRobot):
 
         if (self.currentMoveNum == self.totalRounds):
             print(f"Game complete with {self.totalRounds} rounds played!")
+            print(f"Human won {self.humanWinTimes} out of {self.humanTotalRounds} played!")
 
-            sleep(1)
+            self.playAudio("finish.mp3")
 
+            sleep(2.5)
         else:
             print("Misty ready for next round!")
 
-    def winStatus(self, personMove):
-        if not self.roundStarted:
-            print("Start the round first!")
-            return
+    def startTrialRounds(self):
+        print("Starting trial...")
+        sleep(1.5)
 
+        # NOTE: Person will always play scissors
+        for move in self.possibleMoves:
+            self.currentMoveName = move
+            self.playMoveWithAudio(self.currentMoveName)
+
+            sleep(2)
+
+            self.playAudioName(self.winStatus("scissors"))
+            self.resetArm()
+
+            sleep(1.5)
+
+        self.trialComplete = True
+
+    def winStatus(self, personMove):
         mistyMove = self.currentMoveName
 
         if (mistyMove == personMove):
@@ -170,7 +201,8 @@ KEYCODE = {
     "LEFT": curses.KEY_LEFT,
     "RIGHT": curses.KEY_RIGHT,
     "DOWN": curses.KEY_DOWN,
-    "ESC": 27
+    "ESC": 27,
+    "ENTER": 13
 }
 
 # CHANGE YOUR KEYMAP HERE
@@ -182,7 +214,8 @@ KEYMAP = {
 
     # "HELLO": [ord('h'), ord('i')],
     "START_ROUND": [ord(' ')],
-    "PERSON_RESPONSE": [ord('1'), ord('2'), ord('3')]
+    "PERSON_RESPONSE": [ord('1'), ord('2'), ord('3')],
+    "TRIAL_ROUND": [KEYCODE['ENTER'], ord('t')]
 }
 
 
@@ -206,7 +239,6 @@ def loop(keyboard):
                 break
 
             if key in KEYMAP["START_ROUND"]:
-                print(f"Starting round {misty.currentMoveNum}")
                 misty.startRound()
                 # print(f"Remember human responses are 1, 2, 3 for {misty.possibleMoves}")
 
@@ -214,6 +246,9 @@ def loop(keyboard):
                 i = int(chr(key)) - 1
                 person_move = possibleMoves[i]
                 misty.checkRoundStatus(person_move)
+
+            elif key in KEYMAP["TRIAL_ROUND"]:
+                misty.startTrialRounds()
 
             # elif key in KEYMAP["HELLO"]:
             #     misty.waveRightArm()
@@ -246,5 +281,7 @@ if __name__ == "__main__":
     # curses.noecho()
     curses.halfdelay(1)
     keyboard.keypad(True)
+
+    print("Remember to start the trial first with the <ENTER> key.")
 
     curses.wrapper(loop)
