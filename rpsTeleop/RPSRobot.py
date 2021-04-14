@@ -1,10 +1,7 @@
 from MistyRobot import MistyRobot
 import numpy as np
-from time import sleep
 import os
-import sys
-
-import getch
+from time import sleep
 
 class RPSRobot(MistyRobot):
     def __init__(self, ip, conditionInFavorOf, possibleMoves, debug=False):
@@ -18,7 +15,6 @@ class RPSRobot(MistyRobot):
         self.humanWinTimes = 0
 
         # Setup conditions and moves
-        assert conditionInFavorOf in conditions, f"Condition must be one of {conditions}"
         self.conditionInFavorOf = conditionInFavorOf
         print("Misty will cheat in favour of:", conditionInFavorOf)
 
@@ -52,7 +48,7 @@ class RPSRobot(MistyRobot):
         self.resetArm()
 
     def waveRightArm(self):
-        misty.playAudio("hello.mp3")
+        self.playAudio("hello.mp3")
 
         self.moveArmDegrees("right", -80, 30)  # Right arm up to wave
         sleep(1)
@@ -96,7 +92,7 @@ class RPSRobot(MistyRobot):
         if (self.currentMoveNum == self.totalRounds):
             return
 
-        print(f"Starting round {misty.currentMoveNum}")
+        print(f"Starting round {self.currentMoveNum}")
 
         self.roundStarted = True
         if(self.currentMoveNum == 0):
@@ -106,7 +102,7 @@ class RPSRobot(MistyRobot):
         self.currentMoveName = self.moveList[self.currentMoveNum]
 
         if self.debug:
-            print("Misty will play", misty.currentMoveName)
+            print("Misty will play", self.currentMoveName)
 
         self.playMoveWithAudio(self.currentMoveName)
 
@@ -130,22 +126,22 @@ class RPSRobot(MistyRobot):
                 move = self.getLosingMove(personMove)
                 self.playMove(move)
                 sleep(2)
-                misty.playAudioName('lose')
+                self.playAudioName('lose')
             # Condition in favour of human; cheat to win
             elif self.conditionInFavorOf == "robot" and winStatus != 'win':
                 move = self.getWinningMove(personMove)
                 self.playMove(move)
                 sleep(2)
-                misty.playAudioName('win')
+                self.playAudioName('win')
             # Cannot cheat because already satisfied
             # NOTE: Extended interaction, keep same round number
             else:
                 print("Misty failed to cheat. Game extended by another round.")
                 self.currentMoveNum -= 1
-                misty.playAudioName(winStatus)
+                self.playAudioName(winStatus)
                 self.humanWinTimes = self.humanWinTimes + int(winStatus == 'lose')
         else:
-            misty.playAudioName(winStatus)
+            self.playAudioName(winStatus)
             self.humanWinTimes = self.humanWinTimes + int(winStatus == 'lose')
 
         sleep(5)
@@ -206,92 +202,3 @@ class RPSRobot(MistyRobot):
 
     def setHeadPosition(self, position):
         self.moveHead(position['roll'], position['pitch'], position['yaw'])
-
-key = ''
-
-# CONSTANT KEYCODES
-KEYCODE = {
-    "UP": chr(38),
-    "LEFT": chr(37),
-    "RIGHT": chr(39),
-    "DOWN": chr(40),
-    "ESC": chr(27),
-    "ENTER": chr(13)
-}
-
-# CHANGE YOUR KEYMAP HERE
-KEYMAP = {
-    "UP": ['w', KEYCODE['UP']],
-    "DOWN": ['s', KEYCODE['DOWN']],
-    "LEFT": ['a', KEYCODE['LEFT']],
-    "RIGHT": ['d', KEYCODE['RIGHT']],
-
-    # "HELLO": ['h', 'i'],
-    "START_ROUND": [ord(' ')],
-    "PERSON_RESPONSE": ['1', '2', '3'],
-    "TRIAL_ROUND": [KEYCODE['ENTER'], 't']
-}
-
-
-def isInteger(n):
-    if n is None:
-        return False
-
-    try:
-        float(n)
-    except ValueError:
-        return False
-    else:
-        return float(n).is_integer()
-
-if __name__ == "__main__":
-    conditionInFavorOf = None if len(sys.argv) <= 1 else sys.argv[1]
-
-    conditions = ["control", "robot", "human"]
-    if isInteger(conditionInFavorOf):
-        conditionInFavorOf = conditions[int(conditionInFavorOf)]
-
-    possibleMoves = ["rock", "paper", "scissors"]
-
-    misty = RPSRobot(
-        ip="192.168.1.169",
-        conditionInFavorOf=conditionInFavorOf,
-        possibleMoves=possibleMoves,
-        debug=False
-    )
-
-    print("Remember to start the trial first with the <ENTER> key.")
-
-    misty_head = {
-        "roll": 0,
-        "pitch": 0,
-        "yaw": 0
-    }
-
-    while True:
-        try:
-            key = getch()
-
-            if key == KEYCODE["ESC"]:
-                break
-
-            if key in KEYMAP["START_ROUND"]:
-                misty.startRound()
-                # print(f"Remember human responses are 1, 2, 3 for {misty.possibleMoves}")
-
-            elif key in KEYMAP["PERSON_RESPONSE"]:
-                i = int(chr(key)) - 1
-                person_move = possibleMoves[i]
-                misty.checkRoundStatus(person_move)
-
-            elif key in KEYMAP["TRIAL_ROUND"]:
-                misty.startTrialRounds()
-
-            # elif key in KEYMAP["HELLO"]:
-            #     misty.waveRightArm()
-
-            sleep(0.01)
-        except KeyboardInterrupt as e:
-            break
-
-    misty.stop()
