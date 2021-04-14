@@ -204,6 +204,8 @@ class RPSRobot(MistyRobot):
         move_id = self.possibleMoves.index(move)
         return self.possibleMoves[(move_id+1) % N]
 
+    def setHeadPosition(self, position):
+        self.moveHead(position['roll'], position['pitch'], position['yaw'])
 
 key = ''
 
@@ -243,6 +245,12 @@ def isInteger(n):
         return float(n).is_integer()
 
 def loop(keyboard):
+    misty_head = {
+        "roll": 0,
+        "pitch": 0,
+        "yaw": 0
+    }
+
     while True:
         try:
             key = keyboard.getch()

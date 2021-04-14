@@ -112,15 +112,18 @@ class MistyRobot:
 
     def moveHead(self, roll, pitch, yaw, velocity=10, units="degrees"):
         if(units == "position"):
-            assert -5.0 <= roll <= 5.0 and -5.0 <= pitch <= 5.0 and - \
-                5.0 <= yaw <= 5.0, " moveHead: Roll, Pitch and Yaw needs to be in range -5 to +5"
+            if not (-5.0 <= roll <= 5.0 and -5.0 <= pitch <= 5.0 and -5.0 <= yaw <= 5.0):
+                print(" moveHead: Roll, Pitch and Yaw needs to be in range -5 to +5")
+                return
         elif(units == "radians"):
-            assert -.75 <= roll <= .75 and -.1662 <= pitch <= .6094 and - \
-                1.57 <= yaw <= 1.57, " moveHead: invalid positioning"
+            if not (-.75 <= roll <= .75 and -.1662 <= pitch <= .6094 and -1.57 <= yaw <= 1.57):
+                print(" moveHead: invalid positioning")
+                return
         else:
             units = "degrees"
-            assert -9.5 <= pitch <= 34.9 and -43 <= roll <= 43 and - \
-                90 <= yaw <= 90, " moveHead: invalid positioning"
+            if not (-9.5 <= pitch <= 34.9 and -43 <= roll <= 43 and -90 <= yaw <= 90):
+                print(" moveHead: invalid positioning")
+                return
 
         assert 0.0 <= velocity <= 100.0, " moveHead: Velocity needs to be in range 0 to 100"
         requests.post('http://'+self.ip+'/api/head', json={
