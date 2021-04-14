@@ -168,7 +168,7 @@ class RPSRobot(MistyRobot):
 
         # NOTE: Person will always play scissors
         for move in self.possibleMoves:
-            self.playMoveWithAudio(self.currentMoveName)
+            self.playMoveWithAudio(move)
 
             sleep(2) # how long before robot responds
 

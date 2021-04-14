@@ -2,7 +2,7 @@ from RPSRobot import RPSRobot
 from time import sleep
 import sys
 
-import getch
+from getch import getch
 
 key = ''
 
@@ -24,7 +24,7 @@ KEYMAP = {
     "RIGHT": ['d', KEYCODE['RIGHT']],
 
     # "HELLO": ['h', 'i'],
-    "START_ROUND": [ord(' ')],
+    "START_ROUND": [' '],
     "PERSON_RESPONSE": ['1', '2', '3', 'l', ';', '\''],
     "TRIAL_ROUND": [KEYCODE['ENTER'], 't']
 }
@@ -57,7 +57,7 @@ def playGame(conditionInFavorOf):
         debug=False
     )
 
-    print("Remember to start the trial first with the <ENTER> key.")
+    # print("Remember to start the trial first with the  key.")
 
     misty_head = {
         "roll": 0,
@@ -73,6 +73,7 @@ def playGame(conditionInFavorOf):
                 break
 
             if key in KEYMAP["START_ROUND"]:
+                print("space pressed")
                 misty.startRound()
                 # print(f"Remember human responses are 1, 2, 3 for {misty.possibleMoves}")
 
