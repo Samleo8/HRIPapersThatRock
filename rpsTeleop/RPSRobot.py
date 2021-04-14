@@ -48,7 +48,7 @@ class RPSRobot(MistyRobot):
         self.resetArm()
 
     def waveRightArm(self):
-        self.playAudio("hello.mp3")
+        # self.playAudio("hello.mp3")
 
         self.moveArmDegrees("right", -80, 30)  # Right arm up to wave
         sleep(1)

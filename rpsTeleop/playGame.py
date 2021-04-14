@@ -23,7 +23,7 @@ KEYMAP = {
     "LEFT": ['a', KEYCODE['LEFT']],
     "RIGHT": ['d', KEYCODE['RIGHT']],
 
-    # "HELLO": ['h', 'i'],
+    "HELLO": ['h'],
     "START_ROUND": [' ', KEYCODE['ENTER']],
     "PERSON_RESPONSE": ['1', '2', '3', 'l', ';', '\''],
     "TRIAL_ROUND": ['t']
@@ -84,8 +84,8 @@ def playGame(conditionInFavorOf):
             elif key in KEYMAP["TRIAL_ROUND"]:
                 misty.startTrialRounds()
 
-            # elif key in KEYMAP["HELLO"]:
-            #     misty.waveRightArm()
+            elif key in KEYMAP["HELLO"]:
+                misty.waveRightArm()
 
             # sleep(0.01)
         except KeyboardInterrupt as e:
