@@ -163,6 +163,9 @@ class RPSRobot(MistyRobot):
             print("Misty ready for next round!")
 
     def startTrialRounds(self):
+        if self.trialComplete: 
+            return
+
         print("Starting trial...")
         sleep(1.5)
 
