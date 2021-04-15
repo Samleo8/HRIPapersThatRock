@@ -5,6 +5,7 @@ from time import sleep
 
 class RPSRobot(MistyRobot):
     def __init__(self, ip, conditionInFavorOf, possibleMoves, debug=False):
+        self.automatedRoundStarted = True
         self.roundStarted = False
         self.trialComplete = False
 
@@ -158,9 +159,33 @@ class RPSRobot(MistyRobot):
 
             sleep(2.5)
 
+            self.automatedRoundStarted = False
+            self.trialComplete = False
+
+            print("\nMisty ready for new game!")
+
+            sleep(0.1)
+            self.__init__(self.ip, self.conditionInFavorOf, self.possibleMoves, self.debug)
+
             return
         else:
-            print("Misty ready for next round!")
+            mistyWaitTime = 5
+            print(f"Misty ready for next round in {mistyWaitTime} seconds!")
+
+            sleep(mistyWaitTime)
+
+            self.startRound()
+
+    def startAllRounds(self):
+        if self.automatedRoundStarted:
+            return
+
+        if not self.trialComplete:
+            self.startTrialRounds()
+            return
+
+        self.automatedRoundStarted = True
+        self.startRound()
 
     def startTrialRounds(self):
         if self.trialComplete: 

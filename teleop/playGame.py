@@ -41,7 +41,7 @@ def isInteger(n):
     else:
         return float(n).is_integer()
 
-def playGame(conditionInFavorOf):
+def playGame(conditionInFavorOf, ipAddr="192.168.1.169"):
     conditions = ["control", "robot", "human"]
     if isInteger(conditionInFavorOf):
         conditionInFavorOf = conditions[int(conditionInFavorOf)]
@@ -51,7 +51,7 @@ def playGame(conditionInFavorOf):
     possibleMoves = ["rock", "paper", "scissors"]
 
     misty = RPSRobot(
-        ip="192.168.1.169",
+        ip=ipAddr,
         conditionInFavorOf=conditionInFavorOf,
         possibleMoves=possibleMoves,
         debug=False
@@ -73,7 +73,7 @@ def playGame(conditionInFavorOf):
                 break
 
             if key in KEYMAP["START_ROUND"]:
-                misty.startRound()
+                misty.startAllRounds()
                 # print(f"Remember human responses are 1, 2, 3 for {misty.possibleMoves}")
 
             elif key in KEYMAP["PERSON_RESPONSE"]:
@@ -97,4 +97,6 @@ def playGame(conditionInFavorOf):
 
 if __name__ == "__main__":
     conditionInFavorOf = None if len(sys.argv) <= 1 else sys.argv[1]
-    playGame(conditionInFavorOf)
+    ipAddr = "192.168.1.169" if len(sys.argv) <= 2 else sys.argv[2]
+
+    playGame(conditionInFavorOf, ipAddr)
