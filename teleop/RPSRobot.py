@@ -178,6 +178,7 @@ class RPSRobot(MistyRobot):
 
     def startAllRounds(self):
         if self.automatedRoundStarted:
+            print("Misty will automatically play all the rounds till game completion!\nJust focus on keying in her opponent's inputs!")
             return
 
         if not self.trialComplete:
