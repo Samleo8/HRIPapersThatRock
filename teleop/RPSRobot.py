@@ -5,7 +5,7 @@ from time import sleep
 
 class RPSRobot(MistyRobot):
     def __init__(self, ip, conditionInFavorOf, possibleMoves, debug=False):
-        self.automatedRoundStarted = True
+        self.automatedRoundStarted = False
         self.roundStarted = False
         self.trialComplete = False
 
@@ -17,7 +17,7 @@ class RPSRobot(MistyRobot):
 
         # Setup conditions and moves
         self.conditionInFavorOf = conditionInFavorOf
-        print("Misty will cheat in favour of:", conditionInFavorOf)
+        print("NOTE: Misty will cheat in favour of:", conditionInFavorOf)
 
         self.currentMoveName = ""
         self.possibleMoves = possibleMoves
@@ -107,7 +107,7 @@ class RPSRobot(MistyRobot):
 
         self.playMoveWithAudio(self.currentMoveName)
 
-        print("Awaiting input from human...")
+        print("Awaiting input from human: \n \t 1= ROCK | 2 = PAPER | 3 = SCISSORS")
 
     def checkRoundStatus(self, personMove):
         if not self.roundStarted:

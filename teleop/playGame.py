@@ -100,4 +100,6 @@ if __name__ == "__main__":
     conditionInFavorOf = None if len(sys.argv) <= 1 else sys.argv[1]
     ipAddr = "192.168.1.169" if len(sys.argv) <= 2 else sys.argv[2]
 
+    print("Press <SPACE> to start the trial round, then <SPACE> again to start the actual game.")
+    print("After that, just focus on pressing 123/l;' for rock paper scissors!")
     playGame(conditionInFavorOf, ipAddr)
