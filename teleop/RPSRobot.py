@@ -107,7 +107,7 @@ class RPSRobot(MistyRobot):
 
         self.playMoveWithAudio(self.currentMoveName)
 
-        print("Awaiting input from human: \n \t 1= ROCK | 2 = PAPER | 3 = SCISSORS")
+        print("Awaiting input from human: \n \t 1 = ROCK | 2 = PAPER | 3 = SCISSORS")
 
     def checkRoundStatus(self, personMove):
         if not self.roundStarted:
@@ -169,7 +169,7 @@ class RPSRobot(MistyRobot):
 
             return
         else:
-            mistyWaitTime = 5
+            mistyWaitTime = 3
             print(f"Misty ready for next round in {mistyWaitTime} seconds!")
 
             sleep(mistyWaitTime)
