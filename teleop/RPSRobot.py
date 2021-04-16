@@ -221,6 +221,8 @@ class RPSRobot(MistyRobot):
             sleep(2) # how long before next round
 
         self.trialComplete = True
+        self.resetArm()
+        
         print("Trial complete.")
 
     def winStatus(self, personMove, robotMove=None):

@@ -25,8 +25,9 @@ Alternatively, from the main folder, run the bash script
 ### Controls
 
 Once Misty is started, you can start entering input into the terminal window.
-Most of the game is automated. To start the 3 trial rounds, press `SPACE`.
-Then, to start the actual game, press `SPACE` again. 
+Most of the game is automated. To start the 3 trial rounds, press `SPACE`. Press `t` to toggle whether the trial is complete. This is useful if the participant would like to see the trial again.
+
+Then, to start the actual game, press `SPACE` again.
 
 From here on, just focus on keying in the opponent's move. For rock paper scissors respectively, key in
 
@@ -39,6 +40,8 @@ or
 ```bash
 L ; '
 ```
+
+You can also force an arm reset with `r`.
 
 Note that measures are in place to prevent accidental key presses for SPACE.
 

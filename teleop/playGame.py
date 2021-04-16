@@ -26,7 +26,8 @@ KEYMAP = {
     "HELLO": ['h'],
     "START_ROUND": [' ', KEYCODE['ENTER']],
     "PERSON_RESPONSE": ['1', '2', '3', 'l', ';', '\''],
-    "SKIP_TRIAL": ['t']
+    "SKIP_TRIAL": ['t'],
+    "RESET_ARM": ['r']
 }
 
 
@@ -90,6 +91,9 @@ def playGame(conditionInFavorOf, ipAddr="192.168.1.169"):
 
             elif key in KEYMAP["HELLO"]:
                 misty.waveRightArm()
+
+            elif key in KEYMAP["RESET_ARM"]:
+                misty.resetArm()
 
             # sleep(0.01)
         except KeyboardInterrupt as e:
