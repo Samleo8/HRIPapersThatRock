@@ -84,7 +84,7 @@ def playGame(conditionInFavorOf, ipAddr="192.168.1.169"):
                 misty.checkRoundStatus(person_move)
 
             elif key in KEYMAP["SKIP_TRIAL"]:
-                misty.trialComplete = True
+                misty.trialComplete ^= True
                 print("Misty skipping trial: ", misty.trialComplete)
                 # misty.startTrialRounds()
 

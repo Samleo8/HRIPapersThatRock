@@ -15,6 +15,12 @@ class RPSRobot(MistyRobot):
         self.humanTotalRounds = 0
         self.humanWinTimes = 0
 
+        self.score = {
+            "win": 0,
+            "tie": 0,
+            "lose": 0
+        }
+
         # Setup conditions and moves
         self.conditionInFavorOf = conditionInFavorOf
         print("NOTE: Misty will cheat in favour of:", conditionInFavorOf)
@@ -127,23 +133,29 @@ class RPSRobot(MistyRobot):
                 move = self.getLosingMove(personMove)
                 self.playMove(move)
                 sleep(2)
-                self.playAudioName('lose')
+                winStatus = 'lose'
+                # self.playAudioName('lose')
             # Condition in favour of human; cheat to win
             elif self.conditionInFavorOf == "robot" and winStatus != 'win':
                 move = self.getWinningMove(personMove)
                 self.playMove(move)
                 sleep(2)
-                self.playAudioName('win')
+                winStatus = 'win'
+                # self.playAudioName('win')
             # Cannot cheat because already satisfied
             # NOTE: Extended interaction, keep same round number
             else:
                 print("Misty failed to cheat. Game extended by another round.")
                 self.currentMoveNum -= 1
-                self.playAudioName(winStatus)
-                self.humanWinTimes = self.humanWinTimes + int(winStatus == 'lose')
+                # self.playAudioName(winStatus)
+                # self.humanWinTimes = self.humanWinTimes + int(winStatus == 'lose')
         else:
-            self.playAudioName(winStatus)
-            self.humanWinTimes = self.humanWinTimes + int(winStatus == 'lose')
+            pass
+            # self.playAudioName(winStatus)
+            # self.humanWinTimes = self.humanWinTimes + int(winStatus == 'lose')
+
+        self.playAudioName(winStatus)
+        self.score[winStatus] += 1
 
         sleep(1)
 
@@ -153,7 +165,9 @@ class RPSRobot(MistyRobot):
         self.roundStarted = False
 
         if (self.currentMoveNum == self.totalRounds):
-            print(f"Game complete! Human won {self.humanWinTimes} out of {self.humanTotalRounds} played!")
+            print(f"Game complete!\n Human won {self.score['lose']} times after {self.humanTotalRounds} rounds!");
+
+            print("Misty's Score:", score)
 
             self.playAudio("finish.mp3")
 
