@@ -165,16 +165,16 @@ class RPSRobot(MistyRobot):
         self.roundStarted = False
 
         if (self.currentMoveNum == self.totalRounds):
-            print(f"Game complete!\n Human won {self.score['lose']} times after {self.humanTotalRounds} rounds!");
-
-            print("Misty's Score:", score)
-
             self.playAudio("finish.mp3")
 
             sleep(2.5)
 
             self.automatedRoundStarted = False
             self.trialComplete = False
+
+            print(
+                f"Game complete!\n Human won {self.score['lose']} times after {self.humanTotalRounds} rounds, and tied {self.score['tie']} rounds"
+            )
 
             print("\nMisty ready for new game!")
 
