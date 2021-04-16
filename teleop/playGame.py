@@ -45,7 +45,8 @@ def playGame(conditionInFavorOf, ipAddr="192.168.1.169"):
     conditions = ["control", "robot", "human"]
     if isInteger(conditionInFavorOf):
         conditionInFavorOf = conditions[int(conditionInFavorOf)]
-    conditionInFavorOf = conditionInFavorOf.lower()
+    else:
+        conditionInFavorOf = conditionInFavorOf.lower()
 
     assert conditionInFavorOf in conditions, f"Condition must be one of {conditions}"
 
