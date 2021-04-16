@@ -26,7 +26,7 @@ KEYMAP = {
     "HELLO": ['h'],
     "START_ROUND": [' ', KEYCODE['ENTER']],
     "PERSON_RESPONSE": ['1', '2', '3', 'l', ';', '\''],
-    "TRIAL_ROUND": ['t']
+    "SKIP_TRIAL": ['t']
 }
 
 
@@ -82,8 +82,10 @@ def playGame(conditionInFavorOf, ipAddr="192.168.1.169"):
                 person_move = possibleMoves[i]
                 misty.checkRoundStatus(person_move)
 
-            elif key in KEYMAP["TRIAL_ROUND"]:
-                misty.startTrialRounds()
+            elif key in KEYMAP["SKIP_TRIAL"]:
+                misty.trialComplete = True
+                print("Misty skipping trial: ", misty.trialComplete)
+                # misty.startTrialRounds()
 
             elif key in KEYMAP["HELLO"]:
                 misty.waveRightArm()
