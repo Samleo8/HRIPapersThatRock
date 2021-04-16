@@ -2,7 +2,7 @@ from RPSRobot import RPSRobot
 from time import sleep
 import sys
 
-from getch import getch
+from getch import getche
 
 key = ''
 
@@ -68,7 +68,7 @@ def playGame(conditionInFavorOf, ipAddr="192.168.1.169"):
 
     while True:
         try:
-            key = getch()
+            key = getche()
 
             if key == KEYCODE["ESC"]:
                 break
