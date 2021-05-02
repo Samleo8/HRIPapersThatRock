@@ -134,14 +134,12 @@ class RPSRobot(MistyRobot):
                 self.playMove(move)
                 sleep(2)
                 winStatus = 'lose'
-                # self.playAudioName('lose')
             # Condition in favour of human; cheat to win
             elif self.conditionInFavorOf == "robot" and winStatus != 'win':
                 move = self.getWinningMove(personMove)
                 self.playMove(move)
                 sleep(2)
                 winStatus = 'win'
-                # self.playAudioName('win')
             # Cannot cheat because already satisfied
             # NOTE: Extended interaction, keep same round number
             else:
